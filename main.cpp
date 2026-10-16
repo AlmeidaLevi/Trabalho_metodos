@@ -18,5 +18,7 @@ int main(){
         cin >> a;
         double d_newton_modificado = newton_modificado(a, margem_de_erro, d0);
         cout << "d_newton_modificado: " << d_newton_modificado << "\n\n";
+        double d_newton_raphson = newton_raphson(a, d0, margem_de_erro);
+        cout << "d_newton_raphson: " << d_newton_raphson << "\n\n";
     }
 }
