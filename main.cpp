@@ -7,6 +7,7 @@ int main(){
     int n;
     double margem_de_erro;
     double d0;
+    double d1;
     cout << "Digite o numero de a's: \n";
     cin >> n;
     cout << "Digite a margem de erro: \n";
