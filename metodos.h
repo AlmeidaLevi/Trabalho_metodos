@@ -5,13 +5,11 @@
 
 using namespace std;
 
-double exponencial_de_euler(double x)
-{
+double exponencial_de_euler(double x){
     double termo = 1.0;
     double resultado = 1.0;
 
-    for (int i = 1; i < 101; i++)
-    {
+    for (int i = 1; i < 101; i++){
         termo *= x / i;
         resultado += termo;
     }
@@ -19,94 +17,136 @@ double exponencial_de_euler(double x)
     return resultado;
 }
 
-double func(double d, double a)
-{
+double func(double d, double a){
     double resposta = a;
     resposta *= exponencial_de_euler(d);
     resposta -= 4 * d * d;
     return resposta;
 }
 
-double derivada(double d, double a)
-{
+double derivada(double d, double a){
     double resposta = a;
     resposta *= exponencial_de_euler(d);
     resposta -= 8 * d;
     return resposta;
 }
 
-double newton_modificado(double a, double margem_de_erro, double d0)
-{
+double newton_modificado(double a, double margem_de_erro, double d0){
+
+    cout << setw(2) << left << "k" << " | "
+         << setw(12) << left << "d_k" << " | "
+         << setw(12) << left << "d_k+1" << " | "
+         << setw(12) << left << "f(d)" << " | "
+         << setw(12) << left << "f'(d0)" << " | "
+         << setw(12) << left << "|f(d_k+1)|" << " | "
+         << setw(12) << left << "|d_k+1 - d_k|" << endl;
+
     double derivada_de_d0 = derivada(d0, a);
-    if (derivada_de_d0 == 0)
-    {
+    if (derivada_de_d0 == 0){
         return -1;
     }
+
     bool criterio_diferenca_de_raizes = false;
     bool criterio_funcao_proximo_de_zero = false;
     bool criterio_numero_valido = false;
-    int i = 0;
-    double d_i = d0;
+    int k = 0;
+    double d_k = d0;
     double new_d;
     double func_d_i_val;
-    while (!criterio_diferenca_de_raizes && !criterio_funcao_proximo_de_zero)
-    {
-        func_d_i_val = func(d_i, a);
-        cout << "f(d_i): " << func_d_i_val << "\n";
-        new_d = d_i - (func_d_i_val / derivada_de_d0);
-        if (isnan(new_d) || isinf(new_d))
-        {
-            return -1;
+    double func_new_d;
+    double diff;
+    while (!criterio_diferenca_de_raizes && !criterio_funcao_proximo_de_zero){
+        func_d_i_val = func(d_k, a);
+        new_d = d_k - (func_d_i_val / derivada_de_d0);
+        if (isnan(new_d) || isinf(new_d)){
+            cout << setw(2) << left << k << " | "
+                 << setw(12) << left << d_k << " | "
+                 << setw(12) << left << new_d << " | "
+                 << setw(12) << left << func_d_i_val << " | "
+                 << setw(12) << left << derivada_de_d0 << " | "
+                 << setw(12) << left << "-" << " | "
+                 << setw(12) << left << "-" << endl;
+
+            cout << "Metodo não converge pois d_k+1 = " << new_d << "\n";
+            return new_d;
         }
-        criterio_diferenca_de_raizes = abs(new_d - d_i) < margem_de_erro;
-        criterio_funcao_proximo_de_zero = abs(func(new_d, a)) < margem_de_erro;
-        cout << setw(5) << left << i << "  |  " << setw(15) << left << new_d << "\n";
-        cout << "Diferença de raizes: " << abs(new_d - d_i) << "\n";
-        cout << "Valor na função:" << func(new_d, a) << "\n\n";
-        d_i = new_d;
-        i++;
+        diff = fabs(new_d - d_k);
+        func_new_d = fabs(func(new_d, a));
+
+        criterio_diferenca_de_raizes = diff < margem_de_erro;
+        criterio_funcao_proximo_de_zero = func_new_d < margem_de_erro;
+
+        cout << setw(2) << left << k << " | "
+             << setw(12) << left << d_k << " | "
+             << setw(12) << left << new_d << " | "
+             << setw(12) << left << func_d_i_val << " | "
+             << setw(12) << left << derivada_de_d0 << " | "
+             << setw(12) << left << func_new_d << " | "
+             << setw(12) << left << diff << endl;
+
+        d_k = new_d;
+        k++;
+    }
+
+    if(criterio_diferenca_de_raizes){
+        cout << "\nConvergencia pelo criterio de diferença de raizes.\n";
+    }
+    if(criterio_funcao_proximo_de_zero){
+        cout << "\nConvergencia pelo criterio da função proxima de 0.\n";
     }
 
     return new_d;
 }
 
-double newton_raphson(double a, double d0, double err)
-{
+double newton_raphson(double a, double d0, double err){
     double last_d = d0;
     double current_d = last_d;
     double f = func(last_d, a);
     double f_ = derivada(last_d, a);
     double diff;
 
-    cout << setw(5) << "k" << "  |  " << setw(15) << "d_k" << "  |  " << setw(15) << "d_k+1" << "  |  " << setw(15) << "f(d)" << "  |  " << setw(15) << "f'(d)" << "  |  " << setw(15) << "|f(d_k+1)|" << "  |  " << setw(15) << "|d_k+1 - d_k|" << endl;
-    for (int k = 0; k < 100; k++)
-    {
-        if (f_ != 0)
-        {
+    cout << setw(2) << left << "k" << " | "
+         << setw(12) << left << "d_k" << " | "
+         << setw(12) << left << "d_k+1" << " | "
+         << setw(12) << left << "f(d_k)" << " | "
+         << setw(12) << left << "f'(d_k)" << " | "
+         << setw(12) << left << "|f(d_k+1)|" << " | "
+         << setw(12) << left << "|d_k+1 - d_k|" << endl;
+
+    for (int k = 0; k < 100; k++){
+        if (f_ != 0){
             last_d = current_d;
             current_d = last_d - (f / f_);
-            diff = abs(current_d - last_d);
+            diff = fabs(current_d - last_d);
 
-            cout << setw(5) << left << k << "  |  " << setw(15) << left << last_d << "  |  " << setw(15) << left << current_d << "  |  " << setw(15) << left << f << "  |  " << setw(15) << left << f_ << "  |  " << setw(15) << left << abs(func(current_d, a)) << "  |  " << setw(15) << left << diff << endl;
+            cout << setw(2) << left << k << " | "
+                << setw(12) << left << last_d << " | "
+                << setw(12) << left << current_d << " | "
+                << setw(12) << left << f << " | "
+                << setw(12) << left << f_ << " | "
+                << setw(12) << left << fabs(func(current_d, a)) << " | "
+                << setw(12) << left << diff << endl;
 
-            if (diff < err)
-            {
+            if (diff < err){
                 cout << "Convergência atingida por diferença de raízes no passo " << k << ". Erro atual: " << diff << endl;
                 return current_d;
             }
-            else if (abs(func(current_d, a)) < err)
-            {
-                cout << "Convergência atingida por função próxima de zero no passo " << k << ". Erro atual: " << abs(func(current_d, a)) << endl;
+            else if (fabs(func(current_d, a)) < err){
+                cout << "Convergência atingida por função próxima de zero no passo " << k << ". Erro atual: " << fabs(func(current_d, a)) << endl;
                 return current_d;
             }
-            else
-
+            else{
                 f = func(current_d, a);
+            }
             f_ = derivada(current_d, a);
-        }
-        else
-        {
-            cout << setw(5) << left << k << "  |  " << setw(15) << left << last_d << "  |  " << setw(15) << left << "-" << "  |  " << setw(15) << left << f << "  |  " << setw(15) << left << f_ << "  |  " << setw(15) << left << "-" << "  |  " << setw(15) << left << "-" << endl;
+        }else{
+            cout << setw(2) << left << k << " | "
+                << setw(12) << left << last_d << " | "
+                << setw(12) << left << "-" << " | "
+                << setw(12) << left << f << " | "
+                << setw(12) << left << f_ << " | "
+                << setw(12) << left << "-" << " | "
+                << setw(12) << left << "-" << endl;
             cout << "Derivada é zero no passo " << k << ". Método não converge." << endl;
             return -1;
         }
@@ -120,16 +160,14 @@ double secante(double a, double m_e, double d0, double d1)
 {
     double d_i = d0, d_i_inc = d1, new_d = d1;
 
-    cout << left
-         << setw(5)  << "i"
-         << setw(16) << "d_i"
-         << setw(16) << "d_i_inc"
-         << setw(16) << "new_d"
-         << setw(16) << "f(d_i)"
-         << setw(16) << "f(d_i_inc)"
-         << setw(16) << "|f(new_d)|"
-         << setw(16) << "|new_d - d_i_inc|"
-         << '\n';
+    cout << setw(2) << "k" << " | "
+         << setw(12) << "d_k-1" << " | "
+         << setw(12) << "d_k" << " | "
+         << setw(12) << "d_k+1" << " | "
+         << setw(12) << "f(d_k-1)" << " | "
+         << setw(12) << "f(d_k)" << " | "
+         << setw(12) << "|f(d_k+1)|" << " | "
+         << setw(12) << "|d_k+1 - d_k|" << endl;
 
     for (int i = 0; i < 100; i++)
     {
@@ -144,19 +182,18 @@ double secante(double a, double m_e, double d0, double d1)
         double dif = fabs(new_d - d_i_inc);
 
         cout << left
-             << setw(5)  << i
-             << setw(16) << d_i
-             << setw(16) << d_i_inc
-             << setw(16) << new_d
-             << setw(16) << f_i
-             << setw(16) << f_i_inc
-             << setw(16) << fabs(f_new)
-             << setw(16) << dif
-             << '\n';
+             << setw(2)  << left << i  << " | "
+             << setw(12) << left << d_i  << " | "
+             << setw(12) << left << d_i_inc  << " | "
+             << setw(12) << left << new_d  << " | "
+             << setw(12) << left << f_i  << " | "
+             << setw(12) << left << f_i_inc  << " | "
+             << setw(12) << left << fabs(f_new)  << " | "
+             << setw(12) << left << dif << endl;
 
         if (dif < m_e || fabs(f_new) < m_e)
         {
-            cout << "Convergiu em " << i + 1 << " iteracoes ("
+            cout << "\nConvergiu em " << i + 1 << " iteracoes ("
                  << (dif < m_e ? "diferenca entre aproximacoes" : "|f(x)| proximo de zero")
                  << " < " << m_e << ").\n";
             return new_d;
