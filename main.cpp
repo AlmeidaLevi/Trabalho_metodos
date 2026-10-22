@@ -52,12 +52,21 @@ int main(){
     cout << setw(2) << left << "a" << " | "
          << setw(20) << left << "d_newton_modificado" << " | "
          << setw(20) << left << "d_newton_raphson" << " | "
-         << setw(20) << left << "d_secante" << " | " << endl;
+         << setw(20) << left << "d_secante" << " | "
+         << setw(5) << left << "Problema gigantesco?" << endl;
 
+    string problema_gigantesco;
     for(int i = 0; i<n; i++){
+        if(all_newton_raphson[i] > 0.7){
+            problema_gigantesco = "Sim";
+        }else{
+            problema_gigantesco = "Não";
+        }
+
         cout << setw(2) << left << all_a[i] << " | "
              << setw(20) << left << all_newton_modificado[i] << " | "
              << setw(20) << left << all_newton_raphson[i] << " | "
-             << setw(20) << left << all_secante[i] << " | " << endl;
+             << setw(20) << left << all_secante[i] << " | "
+             << setw(5) << left << problema_gigantesco << endl;
     }
 }
