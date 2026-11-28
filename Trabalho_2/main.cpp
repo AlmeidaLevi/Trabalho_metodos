@@ -21,16 +21,6 @@ struct Resposta {
     bool confiavel;
 };
 
-// A^-1 coluna a coluna por Gauss-Jacobi, usando a precisão informada pelo usuário
-vector<vector<double>> inversa_por_gauss_jacobi(const vector<vector<double>>& A, int n, double e){
-    vector<vector<double>> I = identity_matrix(n);
-    vector<vector<double>> inversa(n, vector<double>(n, 0));
-    for(int i = 0; i<n; i++){
-        vector<double> coluna = gauss_jacobi(A, I[i], n, e);
-        for(int j = 0; j<n; j++) inversa[j][i] = coluna[j];
-    }
-    return inversa;
-}
 
 // Confere A*d = b para detectar quando o método não convergiu
 bool solucao_confiavel(const Teste& t, const vector<double>& d){
@@ -78,7 +68,7 @@ void imprimir_analise(const vector<double>& d, bool confiavel){
 
 void imprimir_quadro(const string& nome, const vector<Teste>& testes,
                      const vector<Resposta>& respostas){
-    cout << string(60, '#') + "\n\n";
+    cout << string(60, '-') + "\n\n";
     cout << "QUADRO RESPOSTA - " << nome << "\n\n";
 
     for(size_t k = 0; k < testes.size(); k++){
@@ -132,7 +122,7 @@ int main(){
     int quantidade;
     double e;
 
-    cout << string(60, '#') + "\n\n";
+    cout << string(60, '-') + "\n\n";
 
     cout << "Que método deseja utilizar?" << endl;
     cout << "1) Gauss-Jacobi" << endl;
@@ -166,7 +156,7 @@ int main(){
     vector<Resposta> seidel;
 
     for(int k = 0; k<quantidade; k++){
-        cout << string(60, '#') + "\n\n";
+        cout << string(60, '-') + "\n\n";
         cout << "--- TESTE " << k+1 << " ---" << "\n\n";
 
         Teste t;
